@@ -107,5 +107,37 @@ namespace DotnetDocument.Extensions
             "" => throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input)),
             _ => input.First().ToString().ToUpper() + input.Substring(1).ToLower()
         };
+
+        /// <summary>
+        /// Gets the qualified full name or default using the specified type string
+        /// </summary>
+        /// <param name="typeString">The type string</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <returns>String</returns>
+        public static string GetQualifiedFullNameOrDefault(this string typeString)
+        {
+            if (string.IsNullOrWhiteSpace(typeString)) return string.Empty;
+            
+            var type = AppDomain.CurrentDomain
+                .GetAssemblies()
+                .SelectMany(x => x.GetTypes())
+                .FirstOrDefault(x => x.Name.Equals(typeString, StringComparison.OrdinalIgnoreCase))?
+                .FullName;
+
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                return typeString.EndsWith("?", StringComparison.Ordinal)
+                    ? $"Nullable<{type}>"
+                    : type;
+            }
+
+            typeString = typeString.FirstCharToUpper();
+
+            if (!typeString.EndsWith("?", StringComparison.Ordinal)) return typeString;
+
+            return typeString
+                .Replace("?", ">", StringComparison.Ordinal)
+                .Insert(0, "System.Nullable<");
+        }
     }
 }
