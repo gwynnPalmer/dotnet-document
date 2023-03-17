@@ -131,7 +131,7 @@ namespace DotnetDocument.Extensions
                     : type;
             }
 
-            typeString = typeString.FirstCharToUpper();
+            //typeString = typeString.FirstCharToUpper();
 
             if (!typeString.EndsWith("?", StringComparison.Ordinal)) return typeString;
 

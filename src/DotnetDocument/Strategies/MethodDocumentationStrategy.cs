@@ -209,7 +209,14 @@ public class MethodDocumentationStrategy : DocumentationStrategyBase<MethodDecla
         // TODO: Handle case where node.ExpressionBody is not null
 
         // In case nothing was found, Humanize return type to get a description
-        if (string.IsNullOrWhiteSpace(returns)) returns = FormatUtils.HumanizeReturnsType(returnType);
+        if (string.IsNullOrWhiteSpace(returns))
+        {
+            var qualifiedName = returnType.GetQualifiedFullNameOrDefault();
+            
+            returns = string.IsNullOrWhiteSpace(qualifiedName)
+                ? FormatUtils.HumanizeReturnsType(returnType)
+                : qualifiedName;
+        }
 
         return returns;
     }
